@@ -166,7 +166,9 @@ body {
 
 /* === BUTTONS === */
 .btn-green,
-.btn-red {
+.btn-red,
+.btn-blue,
+.btn-secondary {
     border: none;
     padding: 6px 12px;
     border-radius: 6px;
@@ -181,6 +183,28 @@ body {
 
 .btn-red {
     background: #dc2626;
+}
+
+.btn-blue {
+    background: #2563eb;
+}
+
+.btn-secondary {
+    background: #475569;
+    margin-bottom: 16px;
+}
+
+button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.data-table td button {
+    margin-right: 8px;
+}
+
+.data-table td button:last-child {
+    margin-right: 0;
 }
 
 /* === FORM === */
@@ -206,4 +230,99 @@ body {
     color: white;
     border-radius: 6px;
     cursor: pointer;
+}
+
+.track-details-page h3 {
+    margin-top: 0;
+}
+
+.track-details-grid {
+    display: grid;
+    grid-template-columns: 340px 1fr;
+    gap: 20px;
+}
+
+.track-media-card,
+.track-info-card {
+    background: #fff;
+    border-radius: 10px;
+    padding: 18px;
+    border: 1px solid #e2e8f0;
+}
+
+.track-media-card h4,
+.track-info-card h4 {
+    margin: 0 0 12px 0;
+}
+
+.track-cover-large {
+    width: 100%;
+    border-radius: 8px;
+    margin-bottom: 16px;
+    display: block;
+}
+
+.track-audio-player {
+    width: 100%;
+}
+
+.placeholder-box {
+    background: #f8fafc;
+    color: #64748b;
+    border: 1px dashed #cbd5e1;
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 16px;
+}
+
+.track-main-info p {
+    margin: 0 0 8px 0;
+}
+
+.track-text {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    padding: 12px;
+    border-radius: 8px;
+    min-height: 72px;
+    white-space: pre-wrap;
+}
+
+.meta-list {
+    display: grid;
+    gap: 8px;
+}
+
+.meta-item {
+    display: grid;
+    grid-template-columns: 180px 1fr;
+    gap: 8px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid #eef2f7;
+}
+
+.meta-item span {
+    color: #64748b;
+}
+
+.meta-item strong {
+    word-break: break-word;
+}
+
+.track-detail-actions {
+    margin-top: 20px;
+}
+
+.track-detail-actions button {
+    margin-right: 10px;
+}
+
+@media (max-width: 980px) {
+    .track-details-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .content {
+        padding: 20px;
+    }
 }

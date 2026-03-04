@@ -46,6 +46,37 @@ export const createGenreFast = async (name, slug) => {
     return await api.get(`/api/admin/create-genre-fast?name=${name}&slug=${slug}`);
 };
 export const getPendingTracks = async () => (await api.get('/api/admin/pending')).data;
+export const getTrackDetails = async (id) => {
+    const endpoints = [
+        `/api/admin/${id}/details`,
+        `/api/admin/pending/${id}`,
+        `/api/admin/track/${id}`,
+        `/api/admin/tracks/${id}`,
+        `/api/tracks/${id}`,
+    ];
+
+    let lastError;
+    for (const endpoint of endpoints) {
+        try {
+            const res = await api.get(endpoint);
+            if (res?.data) {
+                return res.data.data ?? res.data;
+            }
+        } catch (e) {
+            lastError = e;
+        }
+    }
+
+    throw lastError || new Error('Failed to load track details');
+};
+
+export const resolveAssetUrl = (value) => {
+    if (!value || typeof value !== 'string') return '';
+    if (value.startsWith('http://') || value.startsWith('https://')) return value;
+    if (value.startsWith('/')) return `${API_URL}${value}`;
+    return `${API_URL}/${value}`;
+};
+
 export const approveTrack = async (id) => await api.post(`/api/admin/${id}/approve`);
 export const rejectTrack = async (id) => await api.post(`/api/admin/${id}/reject`);
 export const getAuthorRequests = async () => (await api.get('/api/admin/admin/author-requests')).data;
