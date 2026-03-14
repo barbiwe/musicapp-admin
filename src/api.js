@@ -46,6 +46,65 @@ export const createGenreFast = async (name, slug) => {
     return await api.get(`/api/admin/create-genre-fast?name=${name}&slug=${slug}`);
 };
 export const getPendingTracks = async () => (await api.get('/api/admin/pending')).data;
+export const getIconMap = async () => {
+    const endpoints = [
+        '/api/Icon/all',
+        '/api/icons/map',
+        '/api/Icons/map',
+        '/api/icon-map',
+        '/api/icons',
+        '/api/Icons',
+    ];
+
+    for (const endpoint of endpoints) {
+        try {
+            const res = await api.get(endpoint);
+            const payload = res?.data;
+            if (!payload || typeof payload !== 'object') continue;
+
+            if (payload.icons && typeof payload.icons === 'object') {
+                return payload;
+            }
+
+            if (Array.isArray(payload)) {
+                const icons = payload.reduce((acc, item) => {
+                    if (!item || typeof item !== 'object') return acc;
+                    const fileName = item.fileName || item.name || item.key;
+                    const rawUrl = item.url || item.path || item.src;
+                    if (typeof fileName === 'string' && fileName.trim() && typeof rawUrl === 'string' && rawUrl.trim()) {
+                        acc[fileName.trim()] = rawUrl.trim();
+                    }
+                    return acc;
+                }, {});
+                return { icons };
+            }
+
+            if (payload.data && typeof payload.data === 'object') {
+                if (Array.isArray(payload.data)) {
+                    const icons = payload.data.reduce((acc, item) => {
+                        if (!item || typeof item !== 'object') return acc;
+                        const fileName = item.fileName || item.name || item.key;
+                        const rawUrl = item.url || item.path || item.src;
+                        if (typeof fileName === 'string' && fileName.trim() && typeof rawUrl === 'string' && rawUrl.trim()) {
+                            acc[fileName.trim()] = rawUrl.trim();
+                        }
+                        return acc;
+                    }, {});
+                    return { icons };
+                }
+                if (payload.data.icons && typeof payload.data.icons === 'object') return payload.data;
+                return { icons: payload.data };
+            }
+
+            return { icons: payload };
+        } catch (_) {
+            // continue trying fallback endpoints
+        }
+    }
+
+    return null;
+};
+
 export const getTrackDetails = async (id) => {
     const endpoints = [
         `/api/admin/${id}/details`,
@@ -69,6 +128,36 @@ export const getTrackDetails = async (id) => {
 
     throw lastError || new Error('Failed to load track details');
 };
+
+export const uploadAd = async ({ title, targetUrl, imageFile, audioFile, durationSeconds = 1 }) => {
+    const formData = new FormData();
+    formData.append('title', title);
+    if (targetUrl) formData.append('targetUrl', targetUrl);
+    formData.append('durationSeconds', String(durationSeconds));
+    formData.append('image', imageFile);
+    formData.append('audio', audioFile);
+
+    const token = localStorage.getItem('adminToken');
+    const headers = token ? { Authorization: `Bearer ${token}` } : undefined;
+
+    return await api.post('/api/ads/upload', formData, { headers });
+};
+
+export const getAllAds = async () => (await api.get('/api/ads')).data;
+export const deleteAd = async (id) => await api.delete(`/api/ads/${id}`);
+export const disableAd = async (id) => await api.put(`/api/ads/${id}/disable`);
+
+export const uploadBanner = async ({ title, link, imageFile }) => {
+    const formData = new FormData();
+    formData.append('title', title);
+    if (link) formData.append('link', link);
+    formData.append('image', imageFile);
+
+    return await api.post('/api/banners/upload', formData);
+};
+
+export const getBanners = async () => (await api.get('/api/banners')).data;
+export const deleteBanner = async (id) => await api.delete(`/api/banners/${id}`);
 
 export const resolveAssetUrl = (value) => {
     if (!value || typeof value !== 'string') return '';
